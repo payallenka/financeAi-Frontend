@@ -1,5 +1,3 @@
-### 📁 **`financeAiFrontend/README.md`**
-```markdown
 # 💸 FinanceAI Frontend (Next.js)
 
 This is the frontend for **FinanceAI**, a personal finance dashboard built with Next.js and Firebase Authentication. It communicates with the Django backend through secure REST APIs.
@@ -92,8 +90,3 @@ This app uses Firebase client-side authentication. After logging in, the Firebas
 ## 📜 License
 
 MIT License © 2025 Payal Lenka
-```
-
----
-
-Let me know if you want these saved to files or committed directly to your repos via command steps!
