@@ -19,7 +19,8 @@ type Transaction = {
 };
 
 type Summary = {
-  labels: string[];
+  labels?: string[];
+  months?: string[];
   values: number[];
   total_expense: number;
 };
@@ -135,39 +136,12 @@ export default function TransactionList() {
           ) : (
             transactions.map((txn) => (
               <li key={txn.id} className="flex justify-between items-center border p-3 mb-2 rounded-lg shadow-sm bg-gray-50">
-                {editingId === txn.id ? (
-                  <div className="flex-grow flex flex-col gap-2">
-                    <input
-                      type="text"
-                      value={editData.description || ""}
-                      onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-                      className="border p-2 rounded w-full"
-                    />
-                    <input
-                      type="number"
-                      value={editData.amount || ""}
-                      onChange={(e) => setEditData({ ...editData, amount: parseFloat(e.target.value) })}
-                      className="border p-2 rounded w-full"
-                    />
-                    <input
-                      type="text"
-                      value={editData.category || ""}
-                      onChange={(e) => setEditData({ ...editData, category: e.target.value })}
-                      className="border p-2 rounded w-full"
-                    />
-                    <div className="flex gap-2 mt-2">
-                      <button onClick={handleSave} className="bg-green-500 text-white px-3 py-1 rounded">Save</button>
-                      <button onClick={() => setEditingId(null)} className="bg-gray-400 text-white px-3 py-1 rounded">Cancel</button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex-grow">
-                    <p className="text-lg font-semibold text-gray-700">{txn.description}</p>
-                    <p className="text-gray-500">Rs.{txn.amount}</p>
-                    <p className="text-sm text-gray-600">Category: {txn.category}</p>
-                    <p className="text-sm text-gray-500">Date: {new Date(txn.date).toLocaleDateString()}</p>
-                  </div>
-                )}
+                <div className="flex-grow">
+                  <p className="text-lg font-semibold text-gray-700">{txn.description}</p>
+                  <p className="text-gray-500">Rs.{txn.amount}</p>
+                  <p className="text-sm text-gray-600">Category: {txn.category}</p>
+                  <p className="text-sm text-gray-500">Date: {new Date(txn.date).toLocaleDateString()}</p>
+                </div>
 
                 <div className="flex gap-2">
                   <button onClick={() => handleEdit(txn)} className="bg-blue-500 text-white px-3 py-1 rounded">Edit</button>
@@ -182,51 +156,51 @@ export default function TransactionList() {
       )}
 
       {/* Summaries */}
+      {view === 'monthly' && monthlySummary && (
+        <div className="bg-white p-4 rounded shadow-md">
+          <h2 className="text-xl font-bold text-gray-800">Monthly Summary</h2>
+          <p className="text-gray-600 font-medium">Total Expense: Rs.{monthlySummary.total_expense}</p>
+          <ul className="mt-2">
+            {monthlySummary.months?.map((month, index) => (
+              <li key={index} className="flex justify-between border-b py-2">
+                <span className="text-gray-700">{month}</span>
+                <span className="text-gray-900 font-semibold">Rs.{monthlySummary.values[index] ?? 0}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {view === 'category' && categorySummary && (
-      <div className="bg-white p-4 rounded shadow-md">
-        <h2 className="text-xl font-bold text-gray-800">Category Summary</h2>
-        <p className="text-gray-600 font-medium">Total Expense: Rs.{categorySummary.total_expense}</p>
-        <ul className="mt-2">
-          {categorySummary.labels.map((label, index) => (
-            <li key={index} className="flex justify-between border-b py-2">
-              <span className="text-gray-700">{label}</span>
-              <span className="text-gray-900 font-semibold">Rs.{categorySummary.values[index]}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
+        <div className="bg-white p-4 rounded shadow-md">
+          <h2 className="text-xl font-bold text-gray-800">Category Summary</h2>
+          <p className="text-gray-600 font-medium">Total Expense: Rs.{categorySummary.total_expense}</p>
+          <ul className="mt-2">
+            {categorySummary.labels?.map((label, index) => (
+              <li key={index} className="flex justify-between border-b py-2">
+                <span className="text-gray-700">{label}</span>
+                <span className="text-gray-900 font-semibold">Rs.{categorySummary.values[index]}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
-    {view === 'monthly' && monthlySummary && (
-      <div className="bg-white p-4 rounded shadow-md">
-        <h2 className="text-xl font-bold text-gray-800">Monthly Summary</h2>
-        <p className="text-gray-600 font-medium">Total Expense: Rs.{monthlySummary.total_expense}</p>
-        <ul className="mt-2">
-          {monthlySummary.labels.map((label, index) => (
-            <li key={index} className="flex justify-between border-b py-2">
-              <span className="text-gray-700">{label}</span>
-              <span className="text-gray-900 font-semibold">Rs.{monthlySummary.values[index]}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
-
-    {view === 'yearly' && yearlySummary && (
-      <div className="bg-white p-4 rounded shadow-md">
-        <h2 className="text-xl font-bold text-gray-800">Yearly Summary</h2>
-        <p className="text-gray-600 font-medium">Total Expense: Rs.{yearlySummary.total_expense}</p>
-        <ul className="mt-2">
-          {yearlySummary.labels.map((label, index) => (
-            <li key={index} className="flex justify-between border-b py-2">
-              <span className="text-gray-700">{label}</span>
-              <span className="text-gray-900 font-semibold">Rs.{yearlySummary.values[index]}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
-
+      {/* Yearly Summary - Added Fix */}
+      {view === 'yearly' && yearlySummary && (
+        <div className="bg-white p-4 rounded shadow-md">
+          <h2 className="text-xl font-bold text-gray-800">Yearly Summary</h2>
+          <p className="text-gray-600 font-medium">Total Expense: Rs.{yearlySummary.total_expense}</p>
+          <ul className="mt-2">
+            {yearlySummary.labels?.map((label, index) => (
+              <li key={index} className="flex justify-between border-b py-2">
+                <span className="text-gray-700">{label}</span>
+                <span className="text-gray-900 font-semibold">Rs.{yearlySummary.values[index]}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
